@@ -1,0 +1,27 @@
+*.iml
+.gradle/
+.idea/
+/build
+/captures
+/gen
+sample/.idea/
+sample/.gradle/
+sample/build/
+sample/androidApp/build/
+sample/shared/build/
+sample/shared/build/local.properties
+sample/shared/build/gradle
+sample/shared/build/gradlew
+sample/shared/build/gradlew.bat
+sample/iosApp/Pods/
+sample/iosApp/Podfile.lock
+# sample/iosApp/iosApp.xcworkspace
+# sample/iosApp/iosApp.xcodeproj/project.pbxproj
+sample/iosApp/iosApp.xcodeproj/xcuserdata/
+sample/iosApp/iosApp.xcworkspace/xcuserdata/
+.xcuserdatad
+.externalNativeBuild
+.cxx
+.DS_Store
+local.properties
+
