@@ -19,9 +19,9 @@ Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 ### Gradle Settings
 Add below gradle settings into your KMP (Kotlin Multiplatform Project)
 
-```kotlin
-// build.gradle.kts
+#### build.gradle.kts in root
 
+```kotlin
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -49,9 +49,10 @@ allprojects {
     }
 }
 ```
-```kotlin
-// shared/build.gradle.kts
 
+#### build.gradle.kts in shared
+
+```kotlin
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
