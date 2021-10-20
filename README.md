@@ -8,6 +8,11 @@
 
 Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 
+## Features
+- Provides simple permission settings
+- Dramatically reduce the amount of code
+- Common interface available on KMM Shared
+
 ## Requirements
 - iOS
   - Deployment Target 10.0 or higher
