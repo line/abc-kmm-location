@@ -7,7 +7,7 @@ plugins {
 }
 
 val abcLocationVersion = "0.2.3"
-val abcLocationLib = "com.linecorp:abc-location-kmm:$abcLocationVersion"
+val abcLocationLib = "com.linecorp:abc-kmm-location:$abcLocationVersion"
 
 version = "1.0"
 

@@ -1,4 +1,4 @@
-# abc-location-kmm
+# abc-kmm-location
 
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![KMM](https://img.shields.io/badge/KMM-0.2.7-lightgreen.svg?logo=KMM)](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
@@ -6,7 +6,7 @@
 [![Gradle](https://img.shields.io/badge/Gradle-7.0.2-blue.svg?logo=Gradle)](https://gradle.org)
 [![Platform](https://img.shields.io/badge/platform-ios,android-lightgray.svg?style=flat)](https://img.shields.io/badge/platform-ios-lightgray.svg?style=flat)
 
-Location Manager for Kotlin Multiplatform Mobile
+Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 
 ## Requirements
 - iOS
@@ -58,7 +58,7 @@ plugins {
     kotlin("native.cocoapods")
 }
 
-val abcLocationLib = "com.linecorp:abc-location-kmm:0.2.3"
+val abcLocationLib = "com.linecorp:abc-kmm-location:0.2.3"
 
 kotlin {
     android()
