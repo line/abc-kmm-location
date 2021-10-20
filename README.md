@@ -1,4 +1,4 @@
-# abc-kmm-location
+![abc-kmm-location: Location Service Manager for Kotlin Multiplatform Mobile iOS and android](images/cover.png)
 
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![KMM](https://img.shields.io/badge/KMM-0.2.7-lightgreen.svg?logo=KMM)](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
