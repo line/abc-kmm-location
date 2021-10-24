@@ -1,11 +1,11 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'shared'
     spec.version                  = '1.0'
-    spec.homepage                 = 'https://github.com/line/abc-shared-location-kmm/sample/iosApp'
+    spec.homepage                 = 'https://github.com/line/abc-kmm-location/sample/iosApp'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Shared Location Manager Kotlin Multiplatform'
+    spec.summary                  = 'Location Service Manager for Kotlin Multiplatform Mobile'
 
     spec.static_framework         = true
     spec.vendored_frameworks      = "build/cocoapods/framework/shared.framework"

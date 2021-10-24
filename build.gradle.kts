@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 
 buildscript {
     repositories {
@@ -103,79 +102,84 @@ android {
     }
 }
 
-val isMavenLocal = System.getProperty("maven.local").toBooleanLenient() ?: false
-if (!isMavenLocal) {
-    publishing {
-        publications {
-            create<MavenPublication>("kmmLocation") {
-                if (isSnapshotUpload) {
-                    from(components.findByName("debug"))
-                } else {
-                    from(components.findByName("release"))
-                }
-
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = if (isSnapshotUpload) "${project.version}-SNAPSHOT" else project.version.toString()
-                val gitRepositoryName = "abc-$artifactId"
-
-                pom {
-                    name.set(artifactId)
-                    description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
-                    url.set("https://github.com/line/$gitRepositoryName")
-
-                    licenses {
-                        license {
-                            name.set("The Apache License, Version 2.0")
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            name.set("LINE Corporation")
-                            email.set("dl_oss_dev@linecorp.com")
-                            url.set("https://engineering.linecorp.com/en/")
-                        }
-                    }
-
-                    scm {
-                        connection.set("scm:git@github.com:line/$gitRepositoryName.git")
-                        developerConnection.set("scm:git:ssh://github.com:line/$gitRepositoryName.git")
-                        url.set("http://github.com/line/$gitRepositoryName")
-                    }
-                }
+publishing {
+    publications {
+        create<MavenPublication>("kmmLocation") {
+            if (isSnapshotUpload) {
+                from(components.findByName("debug"))
+            } else {
+                from(components.findByName("release"))
             }
-        }
-        repositories {
-            maven {
-                name = "MavenCentral"
-                url = if (isSnapshotUpload) {
-                    uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                } else {
-                    uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = if (isSnapshotUpload) "${project.version}-SNAPSHOT" else project.version.toString()
+            val gitRepositoryName = "abc-$artifactId"
+
+            pom {
+                name.set(artifactId)
+                description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
+                url.set("https://github.com/line/$gitRepositoryName")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
                 }
 
-                val sonatypeUsername: String? by project
-                val sonatypePassword: String? by project
+                developers {
+                    developer {
+                        name.set("LINE Corporation")
+                        email.set("dl_oss_dev@linecorp.com")
+                        url.set("https://engineering.linecorp.com/en/")
+                    }
+                    developer {
+                        id.set("pisces")
+                        name.set("Steve Kim")
+                        email.set("pisces@linecorp.com")
+                    }
+                }
 
-                println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${(sonatypePassword ?: "").map { "*" }.joinToString("")}")
-
-                credentials {
-                    username = sonatypeUsername ?: ""
-                    password = sonatypePassword ?: ""
+                scm {
+                    connection.set("scm:git@github.com:line/$gitRepositoryName.git")
+                    developerConnection.set("scm:git:ssh://github.com:line/$gitRepositoryName.git")
+                    url.set("http://github.com/line/$gitRepositoryName")
                 }
             }
         }
     }
-    signing {
-        val signingKey: String? by project
-        val signingPassword: String? by project
+    repositories {
+        maven {
+            name = "MavenCentral"
+            url = if (isSnapshotUpload) {
+                uri("https://oss.sonatype.org/content/repositories/snapshots/")
+            } else {
+                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
 
-        println("signingKey, signingPassword -> $signingKey, ${(signingPassword ?: "").map { "*" }.joinToString("")}")
+            val sonatypeUsername: String? by project
+            val sonatypePassword: String? by project
 
-        isRequired = !isSnapshotUpload
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications["kmmLocation"])
+            println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${sonatypePassword?.masked()}")
+
+            credentials {
+                username = sonatypeUsername ?: ""
+                password = sonatypePassword ?: ""
+            }
+        }
     }
 }
+
+signing {
+    val signingKey: String? by project
+    val signingPassword: String? by project
+
+    println("signingKey, signingPassword -> ${signingKey?.slice(0..9)}, ${signingPassword?.masked()}")
+
+    isRequired = !isSnapshotUpload
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications["kmmLocation"])
+}
+
+fun String.masked() = map { "*" }.joinToString("")

@@ -30,7 +30,6 @@ Add below gradle settings into your KMP (Kotlin Multiplatform Project)
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
 }
 
 val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.3"

@@ -22,7 +22,7 @@ kotlin {
     android()
 
     cocoapods {
-        ios.deploymentTarget = "9.0"
+        ios.deploymentTarget = "10.0"
         homepage = "https://github.com/line/abc-kmm-location/sample/iosApp"
         summary = "Location Service Manager for Kotlin Multiplatform Mobile"
         podfile = project.file("../iosApp/Podfile")
