@@ -9,8 +9,9 @@
 Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 
 ## Features
-- Provides simple permission settings
-- Dramatically reduce the amount of code
+- Super easy to use location capability in one interface
+- Provides simple permission settings and management
+- Dramatically reduce code to write
 - Common interface available on KMM Shared
 
 ## Requirements
