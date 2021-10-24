@@ -107,7 +107,7 @@ val isMavenLocal = System.getProperty("maven.local").toBooleanLenient() ?: false
 if (!isMavenLocal) {
     publishing {
         publications {
-            create<MavenPublication>("abcKmmLocation") {
+            create<MavenPublication>("kmmLocation") {
                 if (isSnapshotUpload) {
                     from(components.findByName("debug"))
                 } else {
@@ -115,13 +115,14 @@ if (!isMavenLocal) {
                 }
 
                 groupId = project.group.toString()
-                artifactId = "kmm-location"
+                artifactId = project.name
                 version = if (isSnapshotUpload) "${project.version}-SNAPSHOT" else project.version.toString()
+                val gitRepositoryName = "abc-$artifactId"
 
                 pom {
                     name.set(artifactId)
                     description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
-                    url.set("https://github.com/line/${project.name}")
+                    url.set("https://github.com/line/$gitRepositoryName")
 
                     licenses {
                         license {
@@ -139,9 +140,9 @@ if (!isMavenLocal) {
                     }
 
                     scm {
-                        connection.set("scm:git@github.com:line/${project.name}.git")
-                        developerConnection.set("scm:git:ssh://github.com:line/${project.name}.git")
-                        url.set("http://github.com/line/${project.name}")
+                        connection.set("scm:git@github.com:line/$gitRepositoryName.git")
+                        developerConnection.set("scm:git:ssh://github.com:line/$gitRepositoryName.git")
+                        url.set("http://github.com/line/$gitRepositoryName")
                     }
                 }
             }
@@ -175,6 +176,6 @@ if (!isMavenLocal) {
 
         isRequired = !isSnapshotUpload
         useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications["abcKmmLocation"])
+        sign(publishing.publications["kmmLocation"])
     }
 }

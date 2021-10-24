@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'abc_kmm_location'
+    spec.name                     = 'kmm_location'
     spec.version                  = '0.2.3'
     spec.homepage                 = ''
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.summary                  = ''
 
     spec.static_framework         = true
-    spec.vendored_frameworks      = "build/cocoapods/framework/abc_kmm_location.framework"
+    spec.vendored_frameworks      = "build/cocoapods/framework/kmm_location.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
 
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
 
     spec.script_phases = [
         {
-            :name => 'Build abc_kmm_location',
+            :name => 'Build kmm_location',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

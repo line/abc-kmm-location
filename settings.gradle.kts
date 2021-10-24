@@ -20,4 +20,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "abc-kmm-location"
+rootProject.name = "kmm-location"
