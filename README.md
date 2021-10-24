@@ -24,37 +24,6 @@ Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 ### Gradle Settings
 Add below gradle settings into your KMP (Kotlin Multiplatform Project)
 
-#### build.gradle.kts in root
-
-```kotlin
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.0.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = uri("http://repo.navercorp.com/maven-release/")
-            isAllowInsecureProtocol = true
-        }
-        maven {
-            url = uri("http://repo.navercorp.com/maven-snapshot/")
-            isAllowInsecureProtocol = true
-        }
-    }
-}
-```
-
 #### build.gradle.kts in shared
 
 ```kotlin
@@ -64,7 +33,7 @@ plugins {
     kotlin("native.cocoapods")
 }
 
-val abcLocationLib = "com.linecorp:abc-kmm-location:0.2.3"
+val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.3"
 
 kotlin {
     android()
