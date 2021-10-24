@@ -6,8 +6,7 @@ plugins {
     kotlin("native.cocoapods")
 }
 
-val abcLocationVersion = "0.2.3"
-val abcLocationLib = "com.linecorp:abc-kmm-location:$abcLocationVersion"
+val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.3"
 
 version = "1.0"
 

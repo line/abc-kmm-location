@@ -97,6 +97,7 @@ internal actual class LocationManager {
 
     internal fun processRequestPermissionsResult(
         requestCode: Int,
+        @Suppress("UNUSED_PARAMETER")
         permissions: Array<String?>,
         grantResults: IntArray
     ) {

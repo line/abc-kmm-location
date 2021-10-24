@@ -32,16 +32,14 @@ allprojects {
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("signing")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
 }
 
-val libVersion = "0.2.3"
-val libVersionCode = 1
 val isSnapshotUpload = false
-
-group = "com.linecorp"
-version = libVersion
+group = "com.linecorp.abc"
+version = "0.2.3"
 
 kotlin {
     ios()
@@ -52,7 +50,6 @@ kotlin {
         val commonMain by getting
         val androidMain by getting {
             dependencies {
-                implementation("androidx.appcompat:appcompat:1.2.0")
                 implementation("com.google.android.gms:play-services-location:18.0.0")
                 implementation("androidx.startup:startup-runtime:1.0.0")
             }
@@ -94,7 +91,6 @@ android {
     defaultConfig {
         minSdk = minSdkVersion
         targetSdk = targetSdkVersion
-        println("##teamcity[setParameter name='postbuild.version' value='${libVersion}']")
     }
     buildTypes {
         getByName("debug") {
@@ -111,7 +107,7 @@ val isMavenLocal = System.getProperty("maven.local").toBooleanLenient() ?: false
 if (!isMavenLocal) {
     publishing {
         publications {
-            create<MavenPublication>("NaverRepo") {
+            create<MavenPublication>("abcKmmLocation") {
                 if (isSnapshotUpload) {
                     from(components.findByName("debug"))
                 } else {
@@ -119,24 +115,32 @@ if (!isMavenLocal) {
                 }
 
                 groupId = project.group.toString()
-                artifactId = artifactId
-                version = if (isSnapshotUpload) "$libVersion-SNAPSHOT" else libVersion
+                artifactId = "kmm-location"
+                version = if (isSnapshotUpload) "${project.version}-SNAPSHOT" else project.version.toString()
 
                 pom {
-                    name.set("$groupId:$artifactId")
+                    name.set(artifactId)
+                    description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
                     url.set("https://github.com/line/${project.name}")
-                    description.set("Shared Location Manager Kotlin Multiplatform")
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
 
                     developers {
                         developer {
-                            id.set("sjin.han")
-                            name.set("sjin-han")
-                            email.set("sjin.han@linecorp.com")
+                            name.set("LINE Corporation")
+                            email.set("dl_oss_dev@linecorp.com")
+                            url.set("https://engineering.linecorp.com/en/")
                         }
                     }
+
                     scm {
-                        connection.set("scm:git:ssh://github.com/line/${project.name}.git")
-                        developerConnection.set("scm:git:ssh://github.com/line/${project.name}.git")
+                        connection.set("scm:git@github.com:line/${project.name}.git")
+                        developerConnection.set("scm:git:ssh://github.com:line/${project.name}.git")
                         url.set("http://github.com/line/${project.name}")
                     }
                 }
@@ -144,18 +148,33 @@ if (!isMavenLocal) {
         }
         repositories {
             maven {
+                name = "MavenCentral"
                 url = if (isSnapshotUpload) {
-                    uri("http://repo.navercorp.com/m2-snapshot-repository")
+                    uri("https://oss.sonatype.org/content/repositories/snapshots/")
                 } else {
-                    uri("http://repo.navercorp.com/maven2")
+                    uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
                 }
-                isAllowInsecureProtocol = true
+
+                val sonatypeUsername: String? by project
+                val sonatypePassword: String? by project
+
+                println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${(sonatypePassword ?: "").map { "*" }.joinToString("")}")
 
                 credentials {
-                    username = System.getProperty("maven.username") ?: ""
-                    password = System.getProperty("maven.password") ?: ""
+                    username = sonatypeUsername ?: ""
+                    password = sonatypePassword ?: ""
                 }
             }
         }
+    }
+    signing {
+        val signingKey: String? by project
+        val signingPassword: String? by project
+
+        println("signingKey, signingPassword -> $signingKey, ${(signingPassword ?: "").map { "*" }.joinToString("")}")
+
+        isRequired = !isSnapshotUpload
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications["abcKmmLocation"])
     }
 }
