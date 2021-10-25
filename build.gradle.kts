@@ -1,3 +1,9 @@
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
+val isSnapshotUpload = System.getProperty("snapshot").toBooleanLenient() ?: false
+val libVersion = "0.2.3"
+val gitName = "abc-${project.name}"
 
 buildscript {
     repositories {
@@ -13,6 +19,14 @@ buildscript {
     }
 }
 
+plugins {
+    id("com.android.library")
+    id("maven-publish")
+    id("signing")
+    kotlin("multiplatform")
+    kotlin("native.cocoapods")
+}
+
 allprojects {
     ext {
         set("compileSdkVersion", 30)
@@ -25,22 +39,112 @@ allprojects {
         google()
         mavenCentral()
     }
-}
 
-plugins {
-    id("com.android.library")
-    id("maven-publish")
-    id("signing")
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-}
+    group = "com.linecorp.abc"
+    version = if (isSnapshotUpload) "$libVersion-SNAPSHOT" else libVersion
 
-val isSnapshotUpload = false
-group = "com.linecorp.abc"
-version = "0.2.3"
+    val javadocJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("javadoc")
+    }
+
+    afterEvaluate {
+        extensions.findByType<PublishingExtension>()?.apply {
+            repositories {
+                maven {
+                    url = if (isSnapshotUpload) {
+                        uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    } else {
+                        uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    }
+
+                    val sonatypeUsername: String? by project
+                    val sonatypePassword: String? by project
+
+                    println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${sonatypePassword?.masked()}")
+
+                    credentials {
+                        username = sonatypeUsername ?: ""
+                        password = sonatypePassword ?: ""
+                    }
+                }
+            }
+
+            publications.withType<MavenPublication>().configureEach {
+                artifact(javadocJar.get())
+
+                pom {
+                    name.set(artifactId)
+                    description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
+                    url.set("https://github.com/line/$gitName")
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                    developers {
+                        developer {
+                            name.set("LINE Corporation")
+                            email.set("dl_oss_dev@linecorp.com")
+                            url.set("https://engineering.linecorp.com/en/")
+                        }
+                        developer {
+                            id.set("pisces")
+                            name.set("Steve Kim")
+                            email.set("pisces@linecorp.com")
+                        }
+                        developer {
+                            id.set("hansjin")
+                            name.set("SeungJin Han")
+                            email.set("sjin.han@linecorp.com")
+                        }
+                        developer {
+                            id.set("sanghyuk.nam")
+                            name.set("Sanghyuk Nam")
+                            email.set("sanghyuk.nam@navercorp.com")
+                        }
+                    }
+                    scm {
+                        connection.set("scm:git@github.com:line/$gitName.git")
+                        developerConnection.set("scm:git:ssh://github.com:line/$gitName.git")
+                        url.set("http://github.com/line/$gitName")
+                    }
+                }
+            }
+        }
+
+        extensions.findByType<SigningExtension>()?.apply {
+            val publishing = extensions.findByType<PublishingExtension>() ?: return@apply
+            val signingKey: String? by project
+            val signingPassword: String? by project
+
+            println("signingKey, signingPassword -> ${signingKey?.slice(0..9)}, ${signingPassword?.masked()}")
+
+            isRequired = !isSnapshotUpload
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications)
+        }
+
+        tasks.withType<Sign>().configureEach {
+            onlyIf { !isSnapshotUpload }
+        }
+    }
+}
 
 kotlin {
-    ios()
+    val enableGranularSourceSetsMetadata = project.extra["kotlin.mpp.enableGranularSourceSetsMetadata"]?.toString()?.toBoolean() ?: false
+    if (enableGranularSourceSetsMetadata) {
+        val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
+            if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true)
+                ::iosArm64
+            else
+                ::iosX64
+        iosTarget("ios") { }
+    } else {
+        ios()
+    }
+
     android {
         publishAllLibraryVariants()
     }
@@ -99,86 +203,6 @@ android {
         unitTests.isIncludeAndroidResources = true
         unitTests.isReturnDefaultValues = true
     }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("kmmLocation") {
-            if (isSnapshotUpload) {
-                from(components.findByName("debug"))
-            } else {
-                from(components.findByName("release"))
-            }
-
-            groupId = project.group.toString()
-            artifactId = project.name
-            version = if (isSnapshotUpload) "${project.version}-SNAPSHOT" else project.version.toString()
-            val gitRepositoryName = "abc-$artifactId"
-
-            pom {
-                name.set(artifactId)
-                description.set("Location Service Manager for Kotlin Multiplatform Mobile iOS and android")
-                url.set("https://github.com/line/$gitRepositoryName")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                developers {
-                    developer {
-                        name.set("LINE Corporation")
-                        email.set("dl_oss_dev@linecorp.com")
-                        url.set("https://engineering.linecorp.com/en/")
-                    }
-                    developer {
-                        id.set("pisces")
-                        name.set("Steve Kim")
-                        email.set("pisces@linecorp.com")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git@github.com:line/$gitRepositoryName.git")
-                    developerConnection.set("scm:git:ssh://github.com:line/$gitRepositoryName.git")
-                    url.set("http://github.com/line/$gitRepositoryName")
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = "MavenCentral"
-            url = if (isSnapshotUpload) {
-                uri("https://oss.sonatype.org/content/repositories/snapshots/")
-            } else {
-                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            }
-
-            val sonatypeUsername: String? by project
-            val sonatypePassword: String? by project
-
-            println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${sonatypePassword?.masked()}")
-
-            credentials {
-                username = sonatypeUsername ?: ""
-                password = sonatypePassword ?: ""
-            }
-        }
-    }
-}
-
-signing {
-    val signingKey: String? by project
-    val signingPassword: String? by project
-
-    println("signingKey, signingPassword -> ${signingKey?.slice(0..9)}, ${signingPassword?.masked()}")
-
-    isRequired = !isSnapshotUpload
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications["kmmLocation"])
 }
 
 fun String.masked() = map { "*" }.joinToString("")
