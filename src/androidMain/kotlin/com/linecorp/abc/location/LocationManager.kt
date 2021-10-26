@@ -11,6 +11,8 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
+import com.linecorp.abc.location.ABCLocation.Companion.notifyOnLocationUnavailable
+import com.linecorp.abc.location.utils.LocationUtil
 
 internal actual class LocationManager {
 
@@ -39,17 +41,21 @@ internal actual class LocationManager {
 
     @SuppressLint("MissingPermission")
     actual fun startLocationUpdating() {
-        if (focusedActivity == null) { return }
+        val activity = focusedActivity ?: return
 
         if (!isPermissionAllowed()) {
             requestPermission()
+            notifyOnLocationUnavailable()
+        } else if(!LocationUtil.checkLocationEnable(activity)) {
+            notifyOnLocationUnavailable()
+        } else {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
         }
 
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
     }
 
     actual fun stopLocationUpdating() {
@@ -81,9 +87,7 @@ internal actual class LocationManager {
 
             override fun onLocationAvailability(locationAvailability: LocationAvailability) {
                 super.onLocationAvailability(locationAvailability)
-                if (!locationAvailability.isLocationAvailable) {
-                    ABCLocation.notifyOnLocationUnavailable()
-                }
+                // 일부 Device 에서 onLocationAvailability 의 값을 믿을 수 없어 사용하지 않음
             }
         }
         val settings = LocationSettingsRequest.Builder()
