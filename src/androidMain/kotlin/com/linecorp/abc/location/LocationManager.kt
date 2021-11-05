@@ -87,12 +87,9 @@ internal actual class LocationManager {
                     coordinates)
                 ABCLocation.notifyOnLocationUpdated(data)
             }
-
-            override fun onLocationAvailability(locationAvailability: LocationAvailability) {
-                super.onLocationAvailability(locationAvailability)
-                // 일부 Device 에서 onLocationAvailability 의 값을 믿을 수 없어 사용하지 않음
-            }
+            // 일부 Device 에서 onLocationAvailability 의 값을 믿을 수 없어 사용하지 않음
         }
+
         val settings = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
             .build()
