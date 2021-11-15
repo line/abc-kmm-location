@@ -33,7 +33,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.3"
+val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.4"
 
 kotlin {
     android()
