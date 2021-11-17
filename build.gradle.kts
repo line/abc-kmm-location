@@ -49,25 +49,25 @@ allprojects {
 
     afterEvaluate {
         extensions.findByType<PublishingExtension>()?.apply {
-//            repositories {
-//                maven {
-//                    url = if (isSnapshotUpload) {
-//                        uri("https://oss.sonatype.org/content/repositories/snapshots/")
-//                    } else {
-//                        uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-//                    }
-//
-//                    val sonatypeUsername: String? by project
-//                    val sonatypePassword: String? by project
-//
-//                    println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${sonatypePassword?.masked()}")
-//
-//                    credentials {
-//                        username = sonatypeUsername ?: ""
-//                        password = sonatypePassword ?: ""
-//                    }
-//                }
-//            }
+            repositories {
+                maven {
+                    url = if (isSnapshotUpload) {
+                        uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    } else {
+                        uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    }
+
+                    val sonatypeUsername: String? by project
+                    val sonatypePassword: String? by project
+
+                    println("sonatypeUsername, sonatypePassword -> $sonatypeUsername, ${sonatypePassword?.masked()}")
+
+                    credentials {
+                        username = sonatypeUsername ?: ""
+                        password = sonatypePassword ?: ""
+                    }
+                }
+            }
 
             publications.withType<MavenPublication>().configureEach {
                 artifact(javadocJar.get())
@@ -114,17 +114,17 @@ allprojects {
             }
         }
 
-//        extensions.findByType<SigningExtension>()?.apply {
-//            val publishing = extensions.findByType<PublishingExtension>() ?: return@apply
-//            val signingKey: String? by project
-//            val signingPassword: String? by project
-//
-//            println("signingKey, signingPassword -> ${signingKey?.slice(0..9)}, ${signingPassword?.masked()}")
-//
-//            isRequired = !isSnapshotUpload
-//            useInMemoryPgpKeys(signingKey, signingPassword)
-//            sign(publishing.publications)
-//        }
+        extensions.findByType<SigningExtension>()?.apply {
+            val publishing = extensions.findByType<PublishingExtension>() ?: return@apply
+            val signingKey: String? by project
+            val signingPassword: String? by project
+
+            println("signingKey, signingPassword -> ${signingKey?.slice(0..9)}, ${signingPassword?.masked()}")
+
+            isRequired = !isSnapshotUpload
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications)
+        }
 
         tasks.withType<Sign>().configureEach {
             onlyIf { !isSnapshotUpload }
