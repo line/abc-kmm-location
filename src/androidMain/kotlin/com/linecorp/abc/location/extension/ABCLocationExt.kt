@@ -29,9 +29,8 @@ internal var ABCLocation.Companion.activity: Activity?
     set(value) { locationManager.activity = value }
 
 internal fun ABCLocation.Companion.configure(context: Context) {
-    val applicationContext = context.applicationContext
     locationManager.configure(context)
 
-    val application = applicationContext as? Application ?: return
+    val application = context.applicationContext as? Application ?: return
     application.registerActivityLifecycleCallbacks(ActivityLifecycleObserver)
 }
