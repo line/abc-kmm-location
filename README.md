@@ -14,94 +14,6 @@ Location Service Manager for Kotlin Multiplatform Mobile iOS and android
 - Dramatically reduce code to write
 - Common interface available on KMM Shared
 
-## Requirements
-- iOS
-  - Deployment Target 10.0 or higher
-- Android
-  - minSdkVersion 21
-
-## Installation
-
-### Gradle Settings
-Add below gradle settings into your KMP (Kotlin Multiplatform Project)
-
-#### build.gradle.kts in shared
-
-```kotlin
-plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
-}
-
-val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.4"
-
-kotlin {
-    android()
-    ios {
-        binaries
-            .filterIsInstance<Framework>()
-            .forEach {
-                it.baseName = "shared"
-                it.transitiveExport = true
-                it.export(abcLocationLib)
-            }
-    }
-
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(abcLocationLib)
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
-        }
-        val androidMain by getting {
-            dependencies {
-                implementation("com.google.android.material:material:1.2.1")
-                implementation(abcLocationLib)
-            }
-        }
-        val androidTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13.2")
-                implementation("androidx.test:core:1.0.0")
-                implementation("androidx.test:runner:1.1.0")
-                implementation("org.robolectric:robolectric:4.2")
-            }
-        }
-        val iosMain by getting {
-            dependencies {
-                implementation(abcLocationLib)
-            }
-        }
-        val iosTest by getting
-    }
-}
-```
-### Project Settings
-Android
-- You can use right now without other settings.
-
-iOS
-1. Create `Podfile` with below setting in your project root.
-```bash
-use_frameworks!
-
-platform :ios, '10.0'
-
-install! 'cocoapods', :deterministic_uuids => false
-
-target 'iosApp' do
-    pod 'shared', :path => '../shared/'
-end
-```
-2. Run command `pod install` on the terminal
-
 ## Usage
 
 ### Register handlers for permissions
@@ -186,3 +98,93 @@ end
     ```swift
     ABCLocation.Companion().stopLocationUpdating()
     ```
+
+
+## Installation
+
+### Gradle Settings
+Add below gradle settings into your KMP (Kotlin Multiplatform Project)
+
+#### build.gradle.kts in shared
+
+```kotlin
+plugins {
+    id("com.android.library")
+    kotlin("multiplatform")
+}
+
+val abcLocationLib = "com.linecorp.abc:kmm-location:0.2.4"
+
+kotlin {
+    android()
+    ios {
+        binaries
+            .filterIsInstance<Framework>()
+            .forEach {
+                it.baseName = "shared"
+                it.transitiveExport = true
+                it.export(abcLocationLib)
+            }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(abcLocationLib)
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation("com.google.android.material:material:1.2.1")
+                implementation(abcLocationLib)
+            }
+        }
+        val androidTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.13.2")
+                implementation("androidx.test:core:1.0.0")
+                implementation("androidx.test:runner:1.1.0")
+                implementation("org.robolectric:robolectric:4.2")
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+                implementation(abcLocationLib)
+            }
+        }
+        val iosTest by getting
+    }
+}
+```
+### Project Settings
+Android
+- You can use right now without other settings.
+
+iOS
+1. Create `Podfile` with below setting in your project root.
+```bash
+use_frameworks!
+
+platform :ios, '10.0'
+
+install! 'cocoapods', :deterministic_uuids => false
+
+target 'iosApp' do
+    pod 'shared', :path => '../shared/'
+end
+```
+2. Run command `pod install` on the terminal
+
+
+## Requirements
+- iOS
+  - Deployment Target 10.0 or higher
+- Android
+  - minSdkVersion 21
