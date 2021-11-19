@@ -3,6 +3,7 @@ package com.linecorp.abc.location
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,7 +13,9 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.linecorp.abc.location.ABCLocation.Companion.notifyOnLocationUnavailable
+import com.linecorp.abc.location.observers.ActivityLifecycleObserver
 import com.linecorp.abc.location.utils.LocationUtil
+import java.lang.ref.WeakReference
 
 internal actual class LocationManager {
 
@@ -30,21 +33,27 @@ internal actual class LocationManager {
     actual fun removeListeners(target: Any) { }
 
     actual fun requestPermission() {
-        focusedActivity?.let {
-            ActivityCompat.requestPermissions(
-                it,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                requestPermissionsRequestCode
-            )
+        val activity = focusedActivity ?: run {
+            notifyOnLocationUnavailable()
+            return
         }
+
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            requestPermissionsRequestCode
+        )
     }
 
     @SuppressLint("MissingPermission")
     actual fun startLocationUpdating() {
-        val activity = focusedActivity ?: return
+        val activity = focusedActivity ?: run {
+            notifyOnLocationUnavailable()
+            return
+        }
 
         if (!isPermissionAllowed()) {
             requestPermission()
@@ -69,10 +78,15 @@ internal actual class LocationManager {
     //  Internal
     // -------------------------------------------------------------------------------------------
 
-    @SuppressLint("StaticFieldLeak")
-    internal var activity: Activity? = null
+    internal var activity: WeakReference<Activity>? = null
 
     internal fun configure(context: Context) {
+        val application = context.applicationContext as? Application
+        application?.registerActivityLifecycleCallbacks(ActivityLifecycleObserver) ?: run {
+            val activity = context.applicationContext as? Activity
+            this.activity = WeakReference(activity)
+        }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
@@ -124,7 +138,11 @@ internal actual class LocationManager {
     }
 
     internal fun showNotificationSetting() {
-        val activity = focusedActivity ?: return
+        val activity = focusedActivity ?: run {
+            notifyOnLocationUnavailable()
+            return
+        }
+
         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             .apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -140,7 +158,7 @@ internal actual class LocationManager {
     private val requestPermissionsRequestCode = 4885
 
     private val focusedActivity: Activity?
-        get() = activity?.let {
+        get() = activity?.get()?.let {
             if (it.isFinishing) null else { it }
         }
 
