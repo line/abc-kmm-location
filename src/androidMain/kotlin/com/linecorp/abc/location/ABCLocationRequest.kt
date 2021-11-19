@@ -1,6 +1,6 @@
 package com.linecorp.abc.location
 
-data class SharedLocationRequest(
+data class ABCLocationRequest(
     var priority: SharedPriority = SharedPriority.PRIORITY_BALANCED_POWER_ACCURACY,
     var fastestInterval: Long? = null,
     var interval: Long? = null,

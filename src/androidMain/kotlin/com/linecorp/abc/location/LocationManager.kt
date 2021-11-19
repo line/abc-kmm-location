@@ -154,16 +154,16 @@ internal actual class LocationManager {
         interval = 10 * 1000L
     }
 
-    fun setLocationRequest(sharedLocationRequest: SharedLocationRequest) {
+    fun setLocationRequest(abcLocationRequest: ABCLocationRequest) {
         locationRequest = LocationRequest.create().apply {
-            priority = sharedLocationRequest.priority.value
-            sharedLocationRequest.fastestInterval?.let { fastestInterval = it }
-            sharedLocationRequest.interval?.let { interval = it }
-            sharedLocationRequest.maxWaitTime?.let { maxWaitTime = it }
-            sharedLocationRequest.smallestDisplacement?.let { smallestDisplacement = it }
-            sharedLocationRequest.isWaitForAccurateLocation?.let { isWaitForAccurateLocation = it }
-            sharedLocationRequest.numUpdates?.let { numUpdates = it }
-            sharedLocationRequest.expirationTime?.let { expirationTime = it }
+            priority = abcLocationRequest.priority.value
+            abcLocationRequest.fastestInterval?.let { fastestInterval = it }
+            abcLocationRequest.interval?.let { interval = it }
+            abcLocationRequest.maxWaitTime?.let { maxWaitTime = it }
+            abcLocationRequest.smallestDisplacement?.let { smallestDisplacement = it }
+            abcLocationRequest.isWaitForAccurateLocation?.let { isWaitForAccurateLocation = it }
+            abcLocationRequest.numUpdates?.let { numUpdates = it }
+            abcLocationRequest.expirationTime?.let { expirationTime = it }
         }
     }
 }

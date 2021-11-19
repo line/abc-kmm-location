@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import com.linecorp.abc.location.ABCLocation
-import com.linecorp.abc.location.SharedLocationRequest
+import com.linecorp.abc.location.ABCLocationRequest
 import com.linecorp.abc.location.observers.ActivityLifecycleObserver
 
 fun ABCLocation.Companion.processRequestPermissionsResult(
@@ -20,8 +20,8 @@ fun ABCLocation.Companion.processRequestPermissionsResult(
 fun ABCLocation.Companion.showNotificationSetting() =
     locationManager.showNotificationSetting()
 
-fun ABCLocation.Companion.setLocationRequest(sharedLocationRequest: SharedLocationRequest) =
-    locationManager.setLocationRequest(sharedLocationRequest)
+fun ABCLocation.Companion.setLocationRequest(ABCLocationRequest: ABCLocationRequest) =
+    locationManager.setLocationRequest(ABCLocationRequest)
 
 
 internal var ABCLocation.Companion.activity: Activity?
