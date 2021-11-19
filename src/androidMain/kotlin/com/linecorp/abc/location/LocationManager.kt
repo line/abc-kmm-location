@@ -93,7 +93,7 @@ internal actual class LocationManager {
         val settings = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
             .build()
-        buildLocationRequest()
+
         LocationServices
             .getSettingsClient(context)
             .checkLocationSettings(settings)
@@ -148,15 +148,22 @@ internal actual class LocationManager {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
+    private var locationRequest: LocationRequest = LocationRequest.create().apply {
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        fastestInterval = 1 * 1000L
+        interval = 10 * 1000L
+    }
 
-    private fun buildLocationRequest() {
-        locationRequest = LocationRequest.create()
-        locationRequest.run {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            fastestInterval = 1 * 1000
-            interval = 1 * 1000
-            smallestDisplacement = 10f
+    fun setLocationRequest(abcLocationRequest: ABCLocationRequest) {
+        locationRequest = LocationRequest.create().apply {
+            priority = abcLocationRequest.priority.value
+            abcLocationRequest.fastestInterval?.let { fastestInterval = it }
+            abcLocationRequest.interval?.let { interval = it }
+            abcLocationRequest.maxWaitTime?.let { maxWaitTime = it }
+            abcLocationRequest.smallestDisplacement?.let { smallestDisplacement = it }
+            abcLocationRequest.isWaitForAccurateLocation?.let { isWaitForAccurateLocation = it }
+            abcLocationRequest.numUpdates?.let { numUpdates = it }
+            abcLocationRequest.expirationTime?.let { expirationTime = it }
         }
     }
 }
