@@ -20,8 +20,8 @@ fun ABCLocation.Companion.processRequestPermissionsResult(
 fun ABCLocation.Companion.showNotificationSetting() =
     locationManager.showNotificationSetting()
 
-fun ABCLocation.Companion.setLocationRequest(ABCLocationRequest: ABCLocationRequest) =
-    locationManager.setLocationRequest(ABCLocationRequest)
+fun ABCLocation.Companion.setLocationRequest(locationRequest: ABCLocationRequest) =
+    locationManager.setLocationRequest(locationRequest)
 
 
 internal var ABCLocation.Companion.activity: Activity?
