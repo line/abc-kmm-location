@@ -1,5 +1,6 @@
 package com.linecorp.abc.location
 
+import com.linecorp.abc.location.extension.previousAuthorizationStatus
 import com.linecorp.abc.location.extension.requiredPermission
 import kotlinx.cinterop.useContents
 import platform.CoreLocation.*
@@ -25,6 +26,7 @@ internal class CLLocationManagerDelegate: NSObject(), CLLocationManagerDelegateP
         val isGranted = ABCLocation.requiredPermission == status ||
                 LocationAuthorizationStatus.AuthorizedAlways == status
         ABCLocation.notifyOnPermissionUpdated(isGranted)
+        ABCLocation.previousAuthorizationStatus = status
         ABCLocation.startLocationUpdating()
     }
 
