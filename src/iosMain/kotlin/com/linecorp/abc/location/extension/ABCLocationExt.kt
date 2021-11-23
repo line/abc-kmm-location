@@ -20,3 +20,7 @@ fun ABCLocation.Companion.onAlwaysAllowsPermissionRequired(
 
 fun ABCLocation.Companion.removeOnAlwaysAllowsPermissionRequired(target: Any) =
     locationManager.removeOnAlwaysAllowsPermissionRequired(target)
+    
+internal var ABCLocation.Companion.previousAuthorizationStatus: LocationAuthorizationStatus
+    get() = locationManager.previousAuthorizationStatus
+    set(value) { locationManager.previousAuthorizationStatus = value }

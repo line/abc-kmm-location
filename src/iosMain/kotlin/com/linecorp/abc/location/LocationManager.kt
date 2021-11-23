@@ -59,6 +59,7 @@ internal actual class LocationManager {
     // -------------------------------------------------------------------------------------------
 
     var requiredPermission = LocationAuthorizationStatus.AuthorizedAlways
+    var previousAuthorizationStatus = LocationAuthorizationStatus.NotSet
 
     fun onAlwaysAllowsPermissionRequired(
         target: Any,
@@ -99,8 +100,6 @@ internal actual class LocationManager {
     }
 
     private val onAlwaysAllowsPermissionRequiredBlockMap = NativeAtomicReference(mapOf<Any, OnAlwaysAllowsPermissionRequiredBlock>())
-
-    private var previousAuthorizationStatus = LocationAuthorizationStatus.NotSet
 
     private fun notifyOnAlwaysAllowsPermissionRequired() {
         onAlwaysAllowsPermissionRequiredBlockMap.value.forEach { it.value() }
