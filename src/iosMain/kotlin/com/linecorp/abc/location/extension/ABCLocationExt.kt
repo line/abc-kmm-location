@@ -7,7 +7,7 @@ import com.linecorp.abc.location.LocationAuthorizationStatus
 typealias OnAlwaysAllowsPermissionRequiredBlock = () -> Unit
 
 
-var ABCLocation.Companion.previousAuthorizationStatus: LocationAuthorizationStatus
+internal var ABCLocation.Companion.previousAuthorizationStatus: LocationAuthorizationStatus
     get() = locationManager.previousAuthorizationStatus
     set(value) { locationManager.previousAuthorizationStatus = value }
 
