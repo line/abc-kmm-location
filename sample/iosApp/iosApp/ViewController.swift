@@ -20,6 +20,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         ABCLocation.Companion().requiredPermission = .authorizedalways
+        ABCLocation.Companion().onAlwaysAllowsPermissionRequired(target: self) {
+            print("onAlwaysAllowsPermissionRequired")
+        }
     }
     
     @IBAction func tappedCurrent(_ sender: UIButton) {
@@ -28,7 +31,9 @@ class ViewController: UIViewController {
                 print("onLocationUnavailable")
                 showPermissionDeniedAlert()
             }
-            .onPermissionUpdated(target: <#T##Any#>, block: <#T##(KotlinBoolean) -> Void#>)
+            .onPermissionUpdated(target: self, block: {
+                print("onPermissionUpdated. Granted:", $0)
+            })
             .currentLocation { [unowned self] data in
                 print("location coordinates", Date(), data.coordinates)
                 locationLabel.text = "Single \(data.coordinates.latitude)\n\(locationLabel.text!)"
@@ -45,7 +50,6 @@ class ViewController: UIViewController {
                 print("location coordinates", Date(), data.coordinates)
                 locationLabel.text = "Continuous \(data.coordinates.latitude)\n\(locationLabel.text!)"
             }
-            .
             .startLocationUpdating()
     }
 
