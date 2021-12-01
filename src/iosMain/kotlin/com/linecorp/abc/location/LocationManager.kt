@@ -36,7 +36,7 @@ internal actual class LocationManager {
     actual fun startLocationUpdating() = when (authorizationStatus) {
         LocationAuthorizationStatus.AuthorizedAlways -> startUpdating()
         LocationAuthorizationStatus.AuthorizedWhenInUse -> if (isRequiredAllowAlways) {
-            if (previousAuthorizationStatus == LocationAuthorizationStatus.AuthorizedWhenInUse) {
+            if (previousAuthorizationStatus.value == LocationAuthorizationStatus.AuthorizedWhenInUse) {
                 notifyOnAlwaysAllowsPermissionRequired()
             } else {
                 requestPermission()
@@ -59,7 +59,7 @@ internal actual class LocationManager {
     // -------------------------------------------------------------------------------------------
 
     var requiredPermission = LocationAuthorizationStatus.AuthorizedAlways
-    var previousAuthorizationStatus = LocationAuthorizationStatus.NotSet
+    val previousAuthorizationStatus = NativeAtomicReference(LocationAuthorizationStatus.NotSet)
 
     fun onAlwaysAllowsPermissionRequired(
         target: Any,
