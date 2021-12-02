@@ -16,7 +16,7 @@ internal actual class LocationManager {
     // -------------------------------------------------------------------------------------------
 
     actual fun isPermissionAllowed() =
-        authorizationStatus == requiredPermission
+        authorizationStatus == requiredPermission.value
 
     actual fun removeAllListeners() {
         onAlwaysAllowsPermissionRequiredBlockMap.value = emptyMap()
@@ -58,7 +58,7 @@ internal actual class LocationManager {
     //  Public
     // -------------------------------------------------------------------------------------------
 
-    var requiredPermission = LocationAuthorizationStatus.AuthorizedAlways
+    val requiredPermission = NativeAtomicReference(LocationAuthorizationStatus.AuthorizedAlways)
     val previousAuthorizationStatus = NativeAtomicReference(LocationAuthorizationStatus.NotSet)
 
     fun onAlwaysAllowsPermissionRequired(
@@ -79,7 +79,7 @@ internal actual class LocationManager {
     // -------------------------------------------------------------------------------------------
 
     private val isRequiredAllowAlways: Boolean
-        get() = requiredPermission == LocationAuthorizationStatus.AuthorizedAlways
+        get() = requiredPermission.value == LocationAuthorizationStatus.AuthorizedAlways
 
     private val authorizationStatus: LocationAuthorizationStatus
         get() = if (Version(UIDevice.currentDevice.systemVersion) >= Version("14")) {
