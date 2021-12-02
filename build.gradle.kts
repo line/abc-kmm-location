@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 val isSnapshotUpload = System.getProperty("snapshot").toBooleanLenient() ?: false
-val libVersion = "0.2.8"
+val libVersion = "0.2.9"
 val gitName = "abc-${project.name}"
 
 buildscript {

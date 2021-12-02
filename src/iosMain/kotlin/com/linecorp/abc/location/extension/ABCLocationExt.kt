@@ -7,8 +7,8 @@ import com.linecorp.abc.location.LocationAuthorizationStatus
 typealias OnAlwaysAllowsPermissionRequiredBlock = () -> Unit
 
 var ABCLocation.Companion.requiredPermission: LocationAuthorizationStatus
-    get() = locationManager.requiredPermission
-    set(value) { locationManager.requiredPermission = value }
+    get() = locationManager.requiredPermission.value
+    set(value) { locationManager.requiredPermission.value = value }
 
 fun ABCLocation.Companion.onAlwaysAllowsPermissionRequired(
     target: Any,
