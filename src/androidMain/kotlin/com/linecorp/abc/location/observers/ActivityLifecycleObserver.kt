@@ -14,7 +14,7 @@ internal object ActivityLifecycleObserver : Application.ActivityLifecycleCallbac
     override fun onActivityStopped(p0: Activity) {}
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {
         val currentActivity = ABCLocation.activity
-        if (currentActivity != null && !currentActivity.isFinishing) {
+        if (currentActivity != null && !currentActivity.isFinishing && !currentActivity.isDestroyed) {
             return
         }
         ABCLocation.activity = p0

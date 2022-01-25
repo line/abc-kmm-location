@@ -8,4 +8,5 @@ internal expect class LocationManager() {
     fun requestPermission()
     fun startLocationUpdating()
     fun stopLocationUpdating()
+    fun getCurrentLocation()
 }

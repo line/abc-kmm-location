@@ -16,7 +16,7 @@ class ABCLocation {
 
         override fun currentLocation(block: OnLocationUpdatedBlock) {
             onLocationUpdatedBlocks.value = onLocationUpdatedBlocks.value.appending(block)
-            locationManager.startLocationUpdating()
+            locationManager.getCurrentLocation()
         }
 
         override fun isPermissionAllowed() = locationManager.isPermissionAllowed()

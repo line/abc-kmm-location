@@ -54,6 +54,22 @@ internal actual class LocationManager {
         locationManager.stopUpdatingLocation()
     }
 
+    //same operation with startLocationUpdating()
+    actual fun getCurrentLocation() = when (authorizationStatus) {
+        LocationAuthorizationStatus.AuthorizedAlways -> startUpdating()
+        LocationAuthorizationStatus.AuthorizedWhenInUse -> if (isRequiredAllowAlways) {
+            if (previousAuthorizationStatus.value == LocationAuthorizationStatus.AuthorizedWhenInUse) {
+                notifyOnAlwaysAllowsPermissionRequired()
+            } else {
+                requestPermission()
+            }
+        } else {
+            startUpdating()
+        }
+        LocationAuthorizationStatus.Denied -> ABCLocation.notifyOnLocationUnavailable()
+        else -> requestPermission()
+    }
+
     // -------------------------------------------------------------------------------------------
     //  Public
     // -------------------------------------------------------------------------------------------

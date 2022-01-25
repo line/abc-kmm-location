@@ -8,14 +8,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.linecorp.abc.location.ABCLocation.Companion.notifyOnLocationUnavailable
+import com.linecorp.abc.location.extension.toLocationData
 import com.linecorp.abc.location.observers.ActivityLifecycleObserver
 import com.linecorp.abc.location.utils.LocationUtil
 import java.lang.ref.WeakReference
+
 
 internal actual class LocationManager {
 
@@ -72,6 +76,66 @@ internal actual class LocationManager {
 
     actual fun stopLocationUpdating() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    //https://developer.android.com/training/location/retrieve-current?hl=ko#BestEstimate
+    @SuppressLint("MissingPermission")
+    actual fun getCurrentLocation() {
+        val activity = focusedActivity ?: run {
+            notifyOnLocationUnavailable()
+            return
+        }
+
+        var isLocationNotified = false
+
+        if (!isPermissionAllowed()) {
+            requestPermission()
+            notifyOnLocationUnavailable()
+        } else if(!LocationUtil.checkLocationEnable(activity)) {
+            notifyOnLocationUnavailable()
+        } else {
+
+            val cts = CancellationTokenSource()
+
+            fusedLocationClient.getCurrentLocation(
+                LocationRequest.PRIORITY_HIGH_ACCURACY,
+                cts.token
+            ).addOnSuccessListener { locationResult ->
+                isLocationNotified = true
+                ABCLocation.notifyOnLocationUpdated(locationResult.toLocationData())
+
+                // For update latest location
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+            }.addOnFailureListener {}
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if(!isLocationNotified) {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { locationResult ->
+                        isLocationNotified = true
+                        ABCLocation.notifyOnLocationUpdated(locationResult.toLocationData())
+
+                        // For update latest location
+                        fusedLocationClient.requestLocationUpdates(
+                            locationRequest,
+                            locationCallback,
+                            Looper.getMainLooper()
+                        )
+                    }.addOnFailureListener {}
+                }
+            }, 5 * 1000)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if(!isLocationNotified) {
+                    notifyOnLocationUnavailable()
+                }
+            }, 10 * 1000)
+
+        }
+
     }
 
     // -------------------------------------------------------------------------------------------
@@ -159,7 +223,7 @@ internal actual class LocationManager {
 
     private val focusedActivity: Activity?
         get() = activity?.get()?.let {
-            if (it.isFinishing) null else { it }
+            if (it.isFinishing || it.isDestroyed) null else { it }
         }
 
     @SuppressLint("StaticFieldLeak")
