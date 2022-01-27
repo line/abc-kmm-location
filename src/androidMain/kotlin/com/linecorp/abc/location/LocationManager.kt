@@ -100,39 +100,44 @@ internal actual class LocationManager {
             fusedLocationClient.getCurrentLocation(
                 LocationRequest.PRIORITY_HIGH_ACCURACY,
                 cts.token
-            ).addOnSuccessListener { locationResult ->
-                isLocationNotified = true
-                ABCLocation.notifyOnLocationUpdated(locationResult.toLocationData())
+            ).addOnSuccessListener { location ->
+                if(location != null) {
+                    ABCLocation.notifyOnLocationUpdated(location.toLocationData())
+                    isLocationNotified = true
 
-                // For update latest location
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
-                )
+                    // For update latest location
+                    fusedLocationClient.requestLocationUpdates(
+                        locationRequest,
+                        locationCallback,
+                        Looper.getMainLooper()
+                    )
+                }
+
             }.addOnFailureListener {}
 
             Handler(Looper.getMainLooper()).postDelayed({
                 if(!isLocationNotified) {
-                    fusedLocationClient.lastLocation.addOnSuccessListener { locationResult ->
-                        isLocationNotified = true
-                        ABCLocation.notifyOnLocationUpdated(locationResult.toLocationData())
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                        if(location != null) {
+                            ABCLocation.notifyOnLocationUpdated(location.toLocationData())
+                            isLocationNotified = true
 
-                        // For update latest location
-                        fusedLocationClient.requestLocationUpdates(
-                            locationRequest,
-                            locationCallback,
-                            Looper.getMainLooper()
-                        )
+                            // For update latest location
+                            fusedLocationClient.requestLocationUpdates(
+                                locationRequest,
+                                locationCallback,
+                                Looper.getMainLooper()
+                            )
+                        }
                     }.addOnFailureListener {}
                 }
-            }, 5 * 1000)
+            }, (5 * 1000).toLong())
 
             Handler(Looper.getMainLooper()).postDelayed({
                 if(!isLocationNotified) {
                     notifyOnLocationUnavailable()
                 }
-            }, 10 * 1000)
+            }, (10 * 1000).toLong())
 
         }
 
